@@ -1,0 +1,21 @@
+.list {
+  padding-left: 150px;
+  padding-top: 10px;
+  text-align: start;
+}
+
+.item {
+  font-size: 16px;
+  font-style: italic;
+  font-weight: 500;
+  text-transform: capitalize;
+}
+
+.item:not(:first-child) {
+  margin-top: 5px;
+}
+
+.element {
+  margin-left: 8px;
+  color: rgb(103, 167, 224);
+}
