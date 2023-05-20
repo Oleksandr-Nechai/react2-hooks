@@ -1,58 +1,60 @@
-import { Component } from 'react';
+import { useState } from 'react';
 
 import Section from './components/Section';
 import FeedbackOptions from './components/FeedbackOptions';
 import Statistics from './components/Statistics';
 import Notification from './components/Notification';
 
-class App extends Component {
-  state = {
-    good: 0,
-    neutral: 0,
-    bad: 0,
+function App() {
+  const [good, setGood] = useState(0);
+  const [neutral, setNeutral] = useState(0);
+  const [bad, setBad] = useState(0);
+
+  const handleButtonClick = name => {
+    switch (name) {
+      case 'good':
+        setGood(prevState => prevState + 1);
+        break;
+      case 'neutral':
+        setNeutral(prevState => prevState + 1);
+        break;
+      case 'bad':
+        setBad(prevState => prevState + 1);
+        break;
+      default:
+        return;
+    }
   };
 
-  handleButtonClick = name => {
-    this.setState(state => ({
-      ...state,
-      [name]: state[name] + 1,
-    }));
-  };
+  const countTotalFeedback = () => good + neutral + bad;
 
-  countTotalFeedback = () =>
-    Object.values(this.state).reduce((acc, items) => acc + items, 0);
+  const countPositiveFeedbackPercentage = () =>
+    countTotalFeedback() ? ((good / countTotalFeedback()) * 100).toFixed(2) : 0;
 
-  countPositiveFeedbackPercentage = () =>
-    this.countTotalFeedback()
-      ? ((this.state.good / this.countTotalFeedback()) * 100).toFixed(2)
-      : 0;
-
-  render() {
-    const arrayKeysState = Object.keys(this.state);
-    const arrayValuesState = Object.values(this.state);
-    return (
-      <>
-        <Section title="Please leave feedback" header={true}>
-          <FeedbackOptions
-            options={arrayKeysState}
-            onLeaveFeedback={this.handleButtonClick}
+  const arrayNameButton = ['good', 'neutral', 'bad'];
+  const arrayValues = [good, neutral, bad];
+  return (
+    <>
+      <Section title="Please leave feedback" header={true}>
+        <FeedbackOptions
+          options={arrayNameButton}
+          handleButtonClick={handleButtonClick}
+        />
+      </Section>
+      <Section title="Statistics">
+        {countTotalFeedback() ? (
+          <Statistics
+            arrayFeedbackOptions={arrayNameButton}
+            arrayFeedbackValues={arrayValues}
+            total={countTotalFeedback()}
+            positivePercentage={countPositiveFeedbackPercentage()}
           />
-        </Section>
-        <Section title="Statistics">
-          {this.countTotalFeedback() ? (
-            <Statistics
-              arrayFeedbackOptions={arrayKeysState}
-              arrayFeedbackValues={arrayValuesState}
-              total={this.countTotalFeedback()}
-              positivePercentage={this.countPositiveFeedbackPercentage()}
-            />
-          ) : (
-            <Notification message="There is no feedback" />
-          )}
-        </Section>
-      </>
-    );
-  }
+        ) : (
+          <Notification message="There is no feedback" />
+        )}
+      </Section>
+    </>
+  );
 }
 
 export default App;
